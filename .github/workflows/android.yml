@@ -12,14 +12,32 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk build-essential libsqlite3-dev gawk unzip zip
+          sudo apt-get install -y openjdk-17-jdk build-essential libsqlite3-dev gawk unzip zip libffi-dev
+
+      - name: Install Python dependencies
+        run: |
           pip install --upgrade pip
           pip install buildozer kivy requests
 
-      - name: Build APK
+      - name: Initialize and Configure Buildozer
+        run: |
+          # 1. Standard-Spec generieren
+          buildozer init
+          
+          # 2. Internet-Berechtigungen aktivieren
+          sed -i 's/#android.permissions = .*/android.permissions = INTERNET, ACCESS_NETWORK_STATE/' buildozer.spec
+          
+          # 3. Anforderungen für Kivy und Requests setzen
+          sed -i 's/requirements = python3, kivy/requirements = python3, kivy, requests, urllib3, chardet, idna, certifi/' buildozer.spec
+          
+          # 4. App-Namen anpassen
+          sed -i 's/title = My Application/title = Shield Titan Sync/' buildozer.spec
+          sed -i 's/package.name = myapp/package.name = shieldsync/' buildozer.spec
+
+      - name: Build APK with Buildozer
         run: buildozer android debug
 
       - name: Upload APK Artifact
