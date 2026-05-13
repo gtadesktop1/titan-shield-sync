@@ -12,15 +12,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install system dependencies
+      - name: Install system dependencies (including 32-bit libs for AIDL)
         run: |
+          sudo dpkg --add-architecture i386
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk build-essential libsqlite3-dev gawk unzip zip libffi-dev
+          sudo apt-get install -y openjdk-17-jdk build-essential libsqlite3-dev gawk unzip zip libffi-dev \
+            libstdc++6:i386 libgcc-s1:i386 zlib1g:i386 libncurses6:i386 \
+            aidl aapt zipalign
 
       - name: Install Python dependencies
         run: |
           pip install --upgrade pip
-          pip install buildozer kivy requests
+          pip install buildozer kivy requests cython
 
       - name: Initialize and Configure Buildozer
         run: |
