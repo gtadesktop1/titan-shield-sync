@@ -20,7 +20,7 @@ jobs:
           sed -i 's/package.name = myapp/package.name = shieldsync/' buildozer.spec
 
       - name: Build APK with Buildozer Action
-        uses: ArtemSBulgakov/buildozer-action@v1
+        uses: ArtemGovorov/buildozer-action@v1
         with:
           command: buildozer android debug
           repository_root: .
